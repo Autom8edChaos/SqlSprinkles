@@ -3,6 +3,8 @@
 SqlSprinkles helps you with creating database tests in .NET that rely heavily on SQL queries. 
 Database tests are difficult to create and maintain. This library allows you to create SQL files that can be run
 and debugged as single file, while they can be parameterized for all your test variations.
+Parameterization is limited to the assignment of the variable with the SET keyword.
+
 Note: this library should only be used in test projects and is not ment for live production code.
 
 # Example
@@ -28,8 +30,8 @@ or something else. That is where SqlSprinkles will help.
 First step is to create a dictionary with all parameters you want to replace and create a new `ParameterManipulator`
 with this dictionary collection:
    
-   var repDict = new Dictionary<string, string>() {{ "@User", "Jane Doe" }};
-   var paraManipulator = new ParameterManipulator(repDict);
+    var repDict = new Dictionary<string, string>() {{ "@User", "Jane Doe" }};
+    var paraManipulator = new ParameterManipulator(repDict);
 
 Now get the Sql template
 
@@ -50,3 +52,11 @@ The result object will contain the following text:
     WHERE user = @User
 
 And using the query will get the password for Jane Doe instead of John Doe.
+
+# Features
+- Datatype aware: TRUE, FALSE and numbers are not quoted
+- NULL aware: NULL value is not quoted
+- Quote override: Dictionary values with quotes will not transform to unquoted; '123', 'TRUE' or 'NULL' will remain quoted
+- Quotes in data will be escaped: a value like `O'Reilly` will be transformed to `'O''Reilly'`
+- Original data will be viewable as comment
+- NVarchar data types can be forced by using `N'some data'` as value, or globally by setting the correct `Options` flag 
